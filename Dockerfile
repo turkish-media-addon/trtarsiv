@@ -17,3 +17,4 @@ ENV LOAD_MEDIAURL_CACHE_MODULE "@mediaurl/cassandra-cache"
 COPY --from=build /code/dist ./dist/
 COPY --from=deps /code/node_modules ./node_modules/
 CMD node dist
+EXPOSE 3000

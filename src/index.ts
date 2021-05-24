@@ -82,9 +82,12 @@ export const trtarsivAddon = createAddon({
             options: {
                 imageShape: "landscape",
                 displayName: true
-            }
+            },
+                        
+
         }
-    ]
+    ],
+    requirements: ["https://www.mediaurl.io/Youtube-resolver"],
 });
 
 trtarsivAddon.registerActionHandler("catalog", async (input, ctx) => {
@@ -102,7 +105,6 @@ trtarsivAddon.registerActionHandler("catalog", async (input, ctx) => {
 
     return {
         nextCursor: null,
-
         items: results.map((item) => {
             const id = item.link;
             return {
@@ -144,4 +146,4 @@ trtarsivAddon.registerActionHandler("item", async (input, ctx) => {
     };
 });
 
-runCli([trtarsivAddon], { singleMode: true });
+runCli([trtarsivAddon], { singleMode: false });
