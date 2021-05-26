@@ -3,9 +3,15 @@ import * as cheerio from "cheerio";
 
 interface TrtArsivItem {
     title: string;
+    link: string;
+    description: string;
+}
+interface TrtArsivList {
+    title: string;
     thumbnail: string;
     link: string;
 }
+
 
 const parseItem = async (
     html: string
@@ -14,17 +20,17 @@ const parseItem = async (
     const detail = $(".detail");
     const title = detail.find(".head-title").text();
     const video = detail.find("iframe").attr("src") as string;
-    const thumbnail = detail.find(".img-responsive").text().toString();
+    const description = detail.find(".paragraph-title").text().toString();
 
     return {
         title: title,
         link: video,
-        thumbnail: thumbnail
+        description: description
     };
 };
 
-const parseList = async (html: string): Promise<TrtArsivItem[]> => {
-    const results: TrtArsivItem[] = [];
+const parseList = async (html: string): Promise<TrtArsivList[]> => {
+    const results: TrtArsivList[] = [];
     const $ = cheerio.load(html);
     $("div.card-thumbnail").each((index, elem) => {
         const thumbnail = ($(elem)
@@ -34,10 +40,10 @@ const parseList = async (html: string): Promise<TrtArsivItem[]> => {
             .split("?")
             .shift();
 
-        const item: TrtArsivItem = {
+        const item: TrtArsivList = {
             title: $(elem).find("img").first().attr("alt") as string,
             thumbnail: thumbnail || "",
-            link: $(elem).find("a").first().attr("href") as string
+            link: $(elem).find("a").first().attr("href") as string,
         };
 
         results.push(item);
@@ -133,6 +139,7 @@ trtarsivAddon.registerActionHandler("item", async (input, ctx) => {
         type: "movie",
         ids: input.ids,
         name: result.title,
+        description: `${result.description}` || "",
         sources: [
             {
                 type: "url",
@@ -140,9 +147,7 @@ trtarsivAddon.registerActionHandler("item", async (input, ctx) => {
                 name: result.title
             }
         ],
-        images: {
-            poster: result.thumbnail
-        }
+      
     };
 });
 
